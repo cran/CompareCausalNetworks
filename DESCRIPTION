@@ -1,12 +1,12 @@
 Package: CompareCausalNetworks
 Type: Package
 Title: Interface to Diverse Estimation Methods of Causal Networks
-Version: 0.1.1
-Date: 2015-06-23
+Version: 0.1.4
+Date: 2015-10-04
 Author: Christina Heinze <heinze@stat.math.ethz.ch>,
   Nicolai Meinshausen <meinshausen@stat.math.ethz.ch>
 Depends: R (>= 3.1.0)
-Imports: Matrix
+Imports: Matrix, methods
 Maintainer: Christina Heinze <heinze@stat.math.ethz.ch>
 Description: Unified interface for the estimation of causal networks, 
  including the methods 'backShift' (from package 'backShift'), 
@@ -27,7 +27,7 @@ Suggests: pcalg, InvariantCausalPrediction, glmnet, backShift, CAM,
 URL: https://github.com/christinaheinze/CompareCausalNetworks
 BugReports:
         https://github.com/christinaheinze/CompareCausalNetworks/issues
-Packaged: 2015-06-23 20:17:01 UTC; cheinze
 NeedsCompilation: no
+Packaged: 2015-10-07 06:55:48 UTC; heinzec
 Repository: CRAN
-Date/Publication: 2015-06-24 01:00:33
+Date/Publication: 2015-10-07 09:49:12
