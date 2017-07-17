@@ -1,5 +1,10 @@
 runRFCI <- function(X, parentsOf, alpha, variableSelMat, setOptions, directed, verbose, 
-                    result){
+                    ...){
+  
+  dots <- list(...)
+  if(length(dots) > 0){
+    warning("options provided via '...' not taken")
+  }
   
   # additional options for RFCI
   optionsList <- list("indepTest"=pcalg::gaussCItest,
@@ -21,12 +26,25 @@ runRFCI <- function(X, parentsOf, alpha, variableSelMat, setOptions, directed, v
                    conservative= optionsList$conservative, 
                    maj.rule=optionsList$maj.rule, rules=optionsList$rules, 
                    verbose= verbose )
-  rfcimat <- as(rfci.fit@amat, "matrix")
-  if(directed) rfcimat <- rfcimat * (t(rfcimat)==0)
+  rfcimat <- rfci.fit@amat
+  
+  if(directed){ 
+    stop("directed currently not implemented for fci.")
+    warning("Removing undirected edges from estimated connectivity matrix.")
+    
+    # fcimat <- fcimat * (t(fcimat)==0) #TODO: fix
+  }
+  
+  result <- vector("list", length = length(parentsOf))
   
   for (k in 1:length(parentsOf)){
     result[[k]] <- which(as.logical(rfcimat[, parentsOf[k]]))
+    attr(result[[k]],"parentsOf") <- parentsOf[k]
   }
 
-  result
+  if(length(parentsOf) < ncol(X)){
+    rfcimat <- rfcimat[,parentsOf]
+  }
+  
+  list(resList = result, resMat = rfcimat)
 }

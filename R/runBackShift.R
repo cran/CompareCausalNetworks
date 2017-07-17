@@ -1,5 +1,5 @@
-runBackShift <- function(X, environment, parentsOf, variableSelMat, pointEst, 
-                         setOptions, verbose, result){
+runBackShift <- function(X, environment, parentsOf, pointEst, 
+                         setOptions, verbose, ...){
   
   # additional options for backShift
   optionsList <- list("covariance"=TRUE, "ev"=0, "threshold"=0.75, "nsim"=100, 
@@ -15,9 +15,11 @@ runBackShift <- function(X, environment, parentsOf, variableSelMat, pointEst,
   if(nrow(X) < p) 
     stop("backShift not suitable if there are more variables 
          than observations")
-  if(!is.null(variableSelMat)) 
-    warning("option 'variableSelMat' not implemented for 
-            'backShift' -- using all variables")
+  
+  dots <- list(...)
+  if(length(dots) > 0){
+    warning("options provided via '...' not taken")
+  }
   
   res <- try(backShift::backShift(
      X, environment, covariance=optionsList$covariance, 
@@ -39,14 +41,26 @@ runBackShift <- function(X, environment, parentsOf, variableSelMat, pointEst,
                varianceEnv = matrix(0, nrow = length(unique(environment)), 
                                     ncol = p))
   }
+  result <- vector("list", length = length(parentsOf))
   for (k in 1:length(parentsOf)){
     if(optionsList$ev == 0)
       result[[k]] <- (wh <- which(res$Ahat[, k]!=0))
     else
       result[[k]] <- (wh <- which(res$AhatAdjacency[, k]!=0))
-    
+
+    attr(result[[k]],"parentsOf") <- parentsOf[k]
     if(pointEst) attr(result[[k]],"coefficients") <- res$Ahat[ wh,k ]
   }
   
-  result
+  resMat <- if(optionsList$ev == 0) res$Ahat else res$AhatAdjacency
+  
+  if(pointEst & optionsList$ev > 0){
+    resMat[resMat != 0] <- res$Ahat[resMat != 0]
+  }
+  
+  if(length(parentsOf) < p){
+    resMat <- resMat[,parentsOf]
+  }
+  
+  list(resList = result, resMat = resMat)
 }

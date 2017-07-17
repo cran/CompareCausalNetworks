@@ -1,10 +1,16 @@
-runCAM<- function(X, interventions, parentsOf, variableSelMat, setOptions, 
-                  directed, verbose, result){
+runCAM<- function(X, interventions, parentsOf, setOptions, 
+                  verbose, ...){
   
   # additional options for CAM
   optionsList <- list("scoreName"="SEMGAM", "numCores"=1,
                       "variableSel"=FALSE, "variableSelMethod"=CAM::selGamBoost, 
                       "pruning"=FALSE, "pruneMethod"=CAM::selGam)
+  
+  dots <- list(...)
+  if(length(dots) > 0){
+    warning("options provided via '...' not taken")
+  }
+  
   
   # adjust according to setOptions if necessary
   optionsList <- adjustOptions(availableOptions = optionsList, 
@@ -27,11 +33,17 @@ runCAM<- function(X, interventions, parentsOf, variableSelMat, setOptions,
   }else{
     cammat <- as(CAM::CAM(X)$Adj,"matrix")
   }
-  if(directed) cammat <- cammat * (t(cammat)==0)
+
+  result <- vector("list", length = length(parentsOf))
   
   for (k in 1:length(parentsOf)){
     result[[k]] <- which(cammat[, parentsOf[k]]>0)
+    attr(result[[k]],"parentsOf") <- parentsOf[k]
   }
   
-  result
+  if(length(parentsOf) < ncol(X)){
+    cammat <- cammat[,parentsOf]
+  }
+  
+  list(resList = result, resMat = cammat)
 }

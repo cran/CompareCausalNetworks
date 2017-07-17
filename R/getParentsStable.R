@@ -1,13 +1,14 @@
 #' Estimate the connectivity matrix of a causal graph using stability selection.
 #'
 #' @description Estimates the connectivity matrix of a directed causal graph, 
-#'  using various possible methods. Supported methods at the moment are backShift, 
-#'  bivariateANM, bivariateCAM, CAM, hiddenICP, ICP, GES, GIES, LINGAM, 
-#'  PC, regression and RFCI.
+#'  using various possible methods. Supported methods at the moment are  ARGES,
+#' backShift, bivariateANM, bivariateCAM, CAM, FCI, FCI+, GES, GIES, hiddenICP, 
+#' ICP, LINGAM, MMHC, rankARGES, rankFci, rankGES, rankGIES, rankPC, 
+#' regression, RFCI and PC.
 #'  Uses stability selection to select an appropriate sparseness.
 #'
 #' @param X A (nxp)-data matrix with n observations of p variables.
-#' @param environment An optional vector of length n, where the entry for 
+#' @param environment A vector of length n, where the entry for 
 #' observation i is an index for the environment in which observation i took 
 #' place (simplest case entries \code{1} for observational data and entries
 #'  \code{2} for interventional data of unspecified type). Is required for 
@@ -41,21 +42,29 @@
 #' @param parentsOf The variables for which we would like to estimate the 
 #' parents. Default are all variables.
 #' @param method A string that specfies the method to use. The methods 
-#' \code{pc} (PC-algorithm), \code{LINGAM} (LINGAM), \code{ges} 
+#' \code{pc} (PC-algorithm), \code{LINGAM} (LINGAM), \code{arges} (Adaptively 
+#' restricted greedy equivalence search), \code{ges} 
 #' (Greedy equivalence search), \code{gies} (Greedy interventional equivalence 
-#' search) and \code{rfci} (Really fast causal inference) are imported from the 
+#' search),  \code{fci} (Fast causal inference)  
+#' and \code{rfci} (Really fast causal inference) are imported from the 
 #' package "pcalg" and are documented there in more detail, including the 
 #' additional options that can be supplied via \code{setOptions}. The method 
 #' \code{CAM} (Causal additive models) is documented in the package "CAM" and 
 #' the methods \code{ICP} (Invariant causal prediction), \code{hiddenICP} 
 #' (Invariant causal prediction with hidden variables) are from the package 
-#' "InvariantCausalPrediction".  The method \code{backShift} comes from the 
-#' package "backShift". Finally, the methods \code{bivariateANM} and 
+#' "InvariantCausalPrediction". The method \code{backShift} comes from the 
+#' package "backShift". The method \code{mmhc} comes from the 
+#' package "bnlearn". 
+#' Finally, the methods \code{bivariateANM} and 
 #' \code{bivariateCAM} are for now implemented internally but will hopefully 
 #' be part of another package at some point in the near future.
 #' @param alpha The level at which tests are done. This leads to confidence 
 #' intervals for \code{ICP} and \code{hiddenICP} and is used internally for 
 #' \code{pc} and \code{rfci}.
+#' @param mode Output type - can be "raw", "parental" or "ancestral". If "raw"
+#' output is the output of the underlying method, without modifications. If "parental"
+#' output described parental relations; if "ancestral" output is casted to ancestral 
+#' relations. #TODO explain further
 #' @param variableSelMat An optional logical matrix of dimension (pxp). An 
 #' entry \code{TRUE} for entry (i,j) says that variable i should be considered 
 #' as a potential parent for variable j and vice versa for \code{FALSE}. If the 
@@ -75,6 +84,7 @@
 #' individual documentations of the methods for more options and their 
 #' possible values.
 #' @param verbose If \code{TRUE}, detailed output is provided.
+#' @param ... Parameters to be passed to underlying method's function.
 #' 
 #' @return A sparse matrix, where a 0 entry in (j,k) corresponds to an estimate 
 #' of 'no edge' \code{j} -> \code{parentsOf[k]}. Entries between 0 and 100 
@@ -87,7 +97,7 @@
 #' Journal of the Royal Statistical Society: Series B, 72, 417-473
 #' 
 #' @author Nicolai Meinshausen \email{meinshausen@@stat.math.ethz.ch}, Christina
-#'  Heinze \email{heinze@@stat.math.ethz.ch}
+#'  Heinze-Deml \email{heinzedeml@@stat.math.ethz.ch}
 #' 
 #' @seealso \code{\link{getParents}} for the underlying point-estimate of 
 #' the causal graph.
@@ -100,11 +110,13 @@ getParentsStable <- function(X, environment, interventions=NULL,
                              sampleObservations=1/sqrt(2), 
                              parentsOf=1:ncol(X), 
                              method= c("ICP", "hiddenICP", "backShift", "pc", 
-                                       "LINGAM", "ges", "gies", "CAM", "rfci",
+                                       "LINGAM", "ges", "gies", "CAM", "fci", "rfci",
                                        "regression", "bivariateANM", 
                                        "bivariateCAM"
                                        )[1],  
-                             alpha=0.1, variableSelMat=NULL, 
+                             alpha=0.1, 
+                             mode = c("raw", "parental", "ancestral")[1],
+                             variableSelMat=NULL, 
                              excludeTargetInterventions=TRUE, 
                              onlyObservationalData=FALSE, 
                              indexObservationalData=NULL, 
@@ -130,32 +142,32 @@ getParentsStable <- function(X, environment, interventions=NULL,
     subs <- sampleSettings* length(uniqueSettings)
     
     # 'backShift' is doing internal subsampling already, so treat differently
-    if(method=="backShift"){ 
-      
+    if(method=="backShift"){
+
       # additional options for backShift
-      optionsList <- list("covariance"=TRUE, 
-                          "tolerance"=10^(-4), 
-                          "baseSettingEnv"=1)      
-      
+      optionsList <- list("covariance"=TRUE,
+                          "tolerance"=10^(-4),
+                          "baseSettingEnv"=1)
+
       # adjust according to setOptions if necessary
-      optionsList <- adjustOptions(availableOptions = optionsList, 
+      optionsList <- adjustOptions(availableOptions = optionsList,
                                    optionsToSet = setOptions)
-      
+
       # run backShift and return adjacency matrix
       resmat <- try(backShift::backShift(
-        X, environment, covariance=optionsList$covariance, ev=EV, 
+        X, environment, covariance=optionsList$covariance, ev=EV,
         threshold=threshold, nsim=nsim,
-        sampleSettings=sampleSettings, 
-        sampleObservations=sampleObservations, 
-        nodewise=nodewise, 
-        tolerance=optionsList$tolerance, 
-        baseSettingEnv=optionsList$baseSettingEnv, 
-        verbose = verbose)$AhatAdjacency, 
+        sampleSettings=sampleSettings,
+        sampleObservations=sampleObservations,
+        nodewise=nodewise,
+        tolerance=optionsList$tolerance,
+        baseSettingEnv=optionsList$baseSettingEnv,
+        verbose = verbose)$AhatAdjacency,
         silent = FALSE)
-      
+
       # catch error
       if(inherits(resmat, "try-error")){
-        warning("backShift -- no stable model found. 
+        warning("backShift -- no stable model found.
                 Possible model mispecification. Returning the empty graph.\n")
         resmat <- 0*diag(p)
       }
@@ -201,8 +213,9 @@ getParentsStable <- function(X, environment, interventions=NULL,
             res <- getParents(X[useSamples,], 
                               environment= environment[useSamples], 
                               interventions=interventions[useSamples],
-                              parentsOf=parentsOf, 
-                              method= method,  alpha= alpha, 
+                              mode = mode,
+                              parentsOf=1:ncol(X), 
+                              method=method, alpha= alpha, 
                               variableSelMat=variableSelMat,  
                               excludeTargetInterventions= excludeTargetInterventions, 
                               onlyObservationalData=FALSE, 
@@ -214,18 +227,11 @@ getParentsStable <- function(X, environment, interventions=NULL,
             diag(res) <- 0
             reskeep <- 0*as(res,"matrix")
             quse <- drawE(q)
-            if(nodewise){
-                for (k in 1:p){
-                    wh <- order(abs(res[,k]), rnorm(p), decreasing=TRUE)[1:quse]
-                    reskeep[wh,k] <- 1
-                    wh <- order(abs(res[k,]), rnorm(p), decreasing=TRUE)[1:quse]
-                    reskeep[k,wh] <- 1
-                }
-            }else{
-                selected <- sort(abs(res), decreasing =  TRUE)[1:quse]
-                indicesSelected <- which(abs(res) >= min(selected), arr.ind=TRUE)
-                reskeep[indicesSelected] <- 1
-            }
+         
+            # order
+            selected <- sort(abs(res), decreasing = TRUE)[1:quse]
+            indicesSelected <- which(abs(res) >= min(selected), arr.ind=TRUE)
+            reskeep[indicesSelected] <- 1
             
             # add result of this run to resmat
             resmat <- resmat + reskeep/nsim

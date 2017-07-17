@@ -1,12 +1,13 @@
 runGIES <- function(X, interventions, parentsOf, variableSelMat, setOptions, 
-                    directed, verbose, result){
+                    directed, verbose, ...){
 
     # check validity of input arguments for GIES
   if(is.null(interventions)) 
     stop("'interventions' cannot be 'NULL' for method 'gies'")
   
   # additional optionsList for GIES
-  optionsList <- list("turning"=TRUE, "maxDegree"=integer(0))
+  optionsList <- list("phase"="turning", "maxDegree"=integer(0), 
+                      "lambda" = 0.5*log(nrow(X)))
   
   # adjust according to setOptions if necessary
   optionsList <- adjustOptions(availableOptions = optionsList, 
@@ -23,31 +24,37 @@ runGIES <- function(X, interventions, parentsOf, variableSelMat, setOptions,
          "setting needs to be entirely different for 'gies' to run."), 
          call. = FALSE)
   
-  score <- new("GaussL0penIntScore", data=X, targets=targets,  
-               target.index = target.index)
+  score <- new("GaussL0penIntScore", 
+               data=X, 
+               targets=targets,  
+               target.index = target.index,
+               lambda = optionsList$lambda)
   
-  tryNewVersion <- try(
-    {
-      tmp <- pcalg::gies(
-        score, 
-        fixedGaps=if(is.null(variableSelMat)) NULL else (!variableSelMat), 
-        turning=optionsList$turning, maxDegree=optionsList$maxDegree,
-        verbose=verbose)
-    },
-    silent=TRUE)
-  
-  if(class(tryNewVersion)=="try-error"){
-    tmp <- pcalg::gies(
-      ncol(X), targets, score, 
-      fixedGaps=if(is.null(variableSelMat)) NULL else (!variableSelMat),
-      turning=optionsList$turning, maxDegree=optionsList$maxDegree,
-      verbose=verbose)
-  }
+
+  tmp <- pcalg::gies(score, 
+                     fixedGaps=if(is.null(variableSelMat)) NULL else (!variableSelMat), 
+                     phase=optionsList$phase, maxDegree=optionsList$maxDegree,
+                     verbose=verbose, ...)
+   
   giesmat <- as(tmp$essgraph, "matrix")
-  if(directed) giesmat <- giesmat * (t(giesmat)==0)
-  for (k in 1:length(parentsOf)){
-    result[[k]] <- which(giesmat[, parentsOf[k]] == 1) 
+  giesmat[giesmat] <- 1
+  giesmat[!giesmat] <- 0
+  
+  if(directed){
+    warning("Removing undirected edges from estimated adjacency matrix.")
+    giesmat <- giesmat * (t(giesmat)==0)
   }
   
-  result
+  result <- vector("list", length = length(parentsOf))
+  
+  for (k in 1:length(parentsOf)){
+    result[[k]] <- which(giesmat[, parentsOf[k]] == 1)
+    attr(result[[k]],"parentsOf") <- parentsOf[k]
+  }
+  
+  if(length(parentsOf) < ncol(X)){
+    giesmat <- giesmat[,parentsOf]
+  }
+  
+  list(resList = result, resMat = giesmat)
 }

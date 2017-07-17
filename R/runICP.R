@@ -1,6 +1,13 @@
 runICP <- function(X, environment, interventions, parentsOf, alpha, 
                    variableSelMat, excludeTargetInterventions, confBound, 
-                   setOptions, verbose, result){
+                   setOptions, directed, verbose, ...){
+  
+  dots <- list(...)
+  if(length(dots) > 0){
+    warning("options provided via '...' not taken")
+  }
+  
+  result <- vector("list", length = length(parentsOf))
   
   # additional options for ICP
   optionsList <- list( "test"="normal", 
@@ -94,10 +101,63 @@ runICP <- function(X, environment, interventions, parentsOf, alpha,
     
     parents <- possibleVar[which( res$maximinCoefficients !=0)]
     result[[k]] <- parents
+    attr(result[[k]],"parentsOf") <- parentsOf[k]
+    
     if(confBound)
       attr(result[[k]],"coefficients") <- 
       res$maximinCoefficients[which(res$maximinCoefficients !=0)]
-}
+  }
     
-  result
+  if(directed){
+    for (k in 1:length(parentsOf)){
+      parentsVar <- result[[k]]
+      
+      if(confBound)
+        coefsParentsVar <-  as.numeric(attr(result[[k]],"coefficients"))
+      
+      childVar <- as.numeric(attr(result[[k]],"parentsOf"))
+      parentsVarOrig <- parentsVar
+      for(p in 1:length(parentsVarOrig)){
+        idxParentsOfParent <- which(sapply(result, 
+                                           function(j) 
+                                             is.element(parentsVarOrig[p], 
+                                                        as.numeric(attr(j, "parentsOf")))))
+        
+        if(length(idxParentsOfParent) == 0)
+          next
+        
+        parentsOfParentP <- result[[idxParentsOfParent]]
+        
+        if(confBound)
+          coefsParentsOfParentP <- as.numeric(attr(result[[idxParentsOfParent]],"coefficients"))
+        
+        
+        if(is.element(childVar, parentsOfParentP)){
+          
+          if(confBound){
+            coefsParentsVar <-  coefsParentsVar[parentsVar != parentsVar[p]]
+            coefsParentsOfParentP <- coefsParentsOfParentP[parentsOfParentP != childVar]
+          }
+          
+          parentsVar <- parentsVar[parentsVar != parentsVar[p]]
+          parentsOfParentP <- parentsOfParentP[parentsOfParentP != childVar]
+          
+          result[[k]] <- parentsVar
+          attr(result[[k]],"parentsOf") <- parentsOf[k]
+        
+          result[[idxParentsOfParent]] <- parentsOfParentP
+          attr(result[[idxParentsOfParent]],"parentsOf") <- parentsVarOrig[p]
+        
+          if(confBound){
+            attr(result[[k]],"coefficients") <- coefsParentsVar
+            attr(result[[idxParentsOfParent]],"coefficients") <- coefsParentsOfParentP
+          }
+          
+        }
+        
+      }
+    }
+  }
+  
+  list(resList = result, resMat = NULL)
 }

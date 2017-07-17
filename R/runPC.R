@@ -1,9 +1,14 @@
-runPC <- function(X, parentsOf, alpha, variableSelMat, setOptions, directed, verbose, 
-                   result){
+runPC <- function(X, suffStat, parentsOf, alpha, variableSelMat, setOptions, directed, verbose, 
+                   result, ...){
+  
+  dots <- list(...)
+  if(length(dots) > 0){
+    warning("options provided via '...' not taken")
+  }
   
   # additional options for PC
   optionsList <- list("indepTest"=pcalg::gaussCItest, "fixedEdges"=NULL,
-                      "NAdelete"=TRUE, "m.max"=Inf, "u2pd", 
+                      "NAdelete"=TRUE, "m.max"=Inf, "u2pd" = "relaxed", 
                       "skel.method"= "stable", "conservative"=FALSE,
                       "maj.rule"=FALSE, "solve.confl"=FALSE)
   
@@ -11,7 +16,10 @@ runPC <- function(X, parentsOf, alpha, variableSelMat, setOptions, directed, ver
   optionsList <- adjustOptions(availableOptions = optionsList, 
                                optionsToSet = setOptions)
   
-  suffStat <- list(C = cor(X), n = nrow(X))
+  if(is.null(suffStat)){
+    suffStat <- list(C = cor(X), n = nrow(X))
+  }
+  
   pc.fit <- pcalg::pc(suffStat, indepTest = optionsList$indepTest, p=ncol(X), 
                alpha = alpha, 
                fixedGaps= if(is.null(variableSelMat)) NULL else (!variableSelMat), 
@@ -22,12 +30,22 @@ runPC <- function(X, parentsOf, alpha, variableSelMat, setOptions, directed, ver
                maj.rule= optionsList$maj.rule, 
                solve.confl = optionsList$solve.confl, 
                verbose= verbose)
-  pcmat <- as(pc.fit@graph, "matrix")
-  if(directed) pcmat <- pcmat * (t(pcmat)==0)
+  pcmat <- as(pc.fit@graph, "matrix") 
+  if(directed){
+    warning("Removing undirected edges from estimated adjacency matrix.")
+    pcmat <- pcmat * (t(pcmat)==0)
+  }
+  
+  result <- vector("list", length = length(parentsOf))
   
   for (k in 1:length(parentsOf)){
     result[[k]] <- which(as.logical(pcmat[, parentsOf[k]]))
+    attr(result[[k]],"parentsOf") <- parentsOf[k]
   }
   
-  result
+  if(length(parentsOf) < ncol(X)){
+    pcmat <- pcmat[,parentsOf]
+  }
+  
+  list(resList = result, resMat = pcmat)
 }
