@@ -229,16 +229,21 @@ described above, ties are broken randomly.
 data("simDataInv")
 X <- simDataInv$X
 set.seed(1)
-rank <- getRanking(X, 
-                   environment = simDataInv$environment,
-                   queries = c("isParent","isMaybeParent"), 
-                   method = c("LINGAM"),
-                   verbose = FALSE)
-# estimated ranking
-print(rank$ranking$isParent)
-
-# true adjacency matrix
-print(simDataInv$configs$trueA)
+if(require(pcalg)){
+  rank <- getRanking(X,
+                environment = simDataInv$environment,
+                queries = c("isParent","isMaybeParent"),
+                method = c("LINGAM"),
+                verbose = FALSE)
+  # estimated ranking
+  print(rank$ranking$isParent)
+ 
+  # true adjacency matrix
+  print(simDataInv$configs$trueA)
+}else{
+  cat("\\nThe packages 'pcalg' is needed for the example to
+work. Please install it.")
+}
 
 }
 \seealso{

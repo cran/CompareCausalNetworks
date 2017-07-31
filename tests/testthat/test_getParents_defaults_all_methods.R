@@ -15,27 +15,27 @@ methods <- c("arges", "backShift", "bivariateANM",
              "regression")
 
 
-# TODO: change all method names to spelling in original package?
-
 for(method in methods){
   test_that(paste("Checks output type for", method), {
     cat(paste("\nMethod:", method, "\n"))
-    
-    expect_is(
-      Ahat <- getParents(X, environment, interventions, method=method, alpha=0.1, mode = mode, sparse = TRUE)
-      , "Matrix")
-    
-    expect_is(
-      Ahat <- getParents(X, environment, interventions, method=method, alpha=0.1, mode = mode, sparse = FALSE)
-      , "matrix")
-    
-    print("\n")
-    print(Ahat)
-    
-    expect_is(
-      Ahat <- getParents(X, environment,interventions, method=method, alpha=0.1, mode = mode, returnAsList = TRUE)
-      , "list")
-    
+    if(checkDependencies(method, checkRequireNamespace)){
+      expect_is(
+        Ahat <- getParents(X, environment, interventions, method=method, alpha=0.1, mode = mode, sparse = TRUE)
+        , "Matrix")
+      
+      expect_is(
+        Ahat <- getParents(X, environment, interventions, method=method, alpha=0.1, mode = mode, sparse = FALSE)
+        , "matrix")
+      
+      print("\n")
+      print(Ahat)
+      
+      expect_is(
+        Ahat <- getParents(X, environment,interventions, method=method, alpha=0.1, mode = mode, returnAsList = TRUE)
+        , "list")
+    }else{
+      print(paste("The required package for ", method," is not installed."))
+    }
   }
   )
 }
