@@ -1,6 +1,6 @@
-015153bab3c5f22eb5b9d1713e723ee2 *DESCRIPTION
+c03a94ebab2b597f5431d7eea2e518cb *DESCRIPTION
 89d519f13f434958c73208d913c332f3 *NAMESPACE
-df600f4b5f839f59c12b8c60408b910b *R/adjustOptions.R
+074c261bdc01e48078a3fd0d6cfc2099 *R/adjustOptions.R
 c1c46d94e4f7fabe599c484f2018bef3 *R/bivariateANM.R
 37373bd2a706e4dc2c3b016949f95858 *R/bivariateCAM.R
 10021d3c38c90da3062a7cf707ac6b03 *R/checkDependencies.R
@@ -8,7 +8,7 @@ cc6cdd8474e665742a0d763bdf72f310 *R/checkMode.R
 32e012e28ecec1b8a70151ad30b18ee7 *R/convertForRanking.R
 b417becda700e37970781bc984551ae2 *R/evaluateRanking.R
 bb425271ea448ab40708732ddf84ca0c *R/getLargestWeightForCycle.R
-7ef472dee434e6d9c36a45fbfe31783a *R/getParents.R
+e63ab2f22ff56eb172159b1c32f8cda4 *R/getParents.R
 8b61263f18ac9e9e839e252123333e32 *R/getParentsStable.R
 626818fd7c1dc51415ff5957c7120a06 *R/getRanking.R
 0cabe3fbb91bb951a75489f3ae430215 *R/helperFunctions.R
@@ -18,7 +18,7 @@ debd16b4bd7989e49333584a2fe93e39 *R/runARGES.R
 044bc70f43d1c5e723424294cb18d82b *R/runBackShift.R
 585a01da1f6ca17134c3232be2e2c354 *R/runBivariateANM.R
 9a875575eeff881ce36bb26883019f90 *R/runBivariateCAM.R
-1eff7c8df1e09b44084e9ea6f5e77a53 *R/runCAM.R
+0b01747bedba31bcaeabb28934c88462 *R/runCAM.R
 655e02b9efa90f26c176e06ae4bfa61b *R/runFCI.R
 65d9c97e9186a144769f6ff6a67d9f61 *R/runFCIPlus.R
 faa86d1448a23d0a9a358b976a7d5af7 *R/runGES.R
@@ -31,8 +31,8 @@ f1bb9aaad94043545cbdfeb5e814f8d8 *R/runNonparaARGES.R
 a9f9739c9a8286240000d6eab18ab6b4 *R/runNonparaFCI.R
 766094e9c7e2175dcf2952ffacb5551d *R/runNonparaGES.R
 b024e5975f057b03b2d490c95b7c5156 *R/runNonparaGIES.R
-d4e68e9fe68cc05f59639b65475a6742 *R/runNonparaPC.R
-d528c05a878ba2c2aa606bb782c98afe *R/runPC.R
+da0dff55dbc2b9dc86f7b49c8c3f4947 *R/runNonparaPC.R
+31c131ce44feea405fb00a0b38e3b62c *R/runPC.R
 3bef29c5472515ffd3e58a1216b27c28 *R/runRFCI.R
 a1c64bec3b4303afbab1e05142daa445 *R/runRegression.R
 d4cf2d0af6a6657971a439aa826b6821 *R/scratch.R
@@ -47,7 +47,7 @@ dccd8043f9680173da37c76f440323fd *data/simDataInv.rda
 f3dd3957e261fa1204e8491efbe427a0 *demo/simulation.R
 e3890d798480f631f404b2d8a1e3a86b *inst/CITATION
 ff20372c47e2628857caa18129fb80a5 *man/CompareCausalNetworks-package.Rd
-e0231c2765b7d83ba3eeaefca1f74702 *man/getParents.Rd
+1bb7971fb09e047ab00885312a8e3686 *man/getParents.Rd
 1422b43fd0799f397846db3888688afb *man/getParentsStable.Rd
 c94f2bf2a302c07a160b211e9c3c4e80 *man/getRanking.Rd
 d6c0a51a47f8d312c5c0d1fa7c145a29 *man/simDataInv.Rd
