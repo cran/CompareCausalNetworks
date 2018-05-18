@@ -1,8 +1,8 @@
 Package: CompareCausalNetworks
 Type: Package
 Title: Interface to Diverse Estimation Methods of Causal Networks
-Version: 0.2.0
-Date: 2019-04-16
+Version: 0.2.2
+Date: 2018-05-18
 Author: Christina Heinze-Deml <heinzedeml@stat.math.ethz.ch>,
     Nicolai Meinshausen <meinshausen@stat.math.ethz.ch>
 Depends: R (>= 3.1.0)
@@ -21,11 +21,11 @@ Description: Unified interface for the estimation of causal networks, including
 License: GPL
 LazyData: true
 Suggests: pcalg, InvariantCausalPrediction, glmnet, backShift, CAM,
-        kernlab, mgcv, bnlearn, testthat, huge, flare
+        kernlab, mgcv, mboost, bnlearn, testthat, huge, flare
 URL: https://github.com/christinaheinze/CompareCausalNetworks
 BugReports: https://github.com/christinaheinze/CompareCausalNetworks/issues
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2018-04-16 07:19:06 UTC; heinzec
+Packaged: 2018-05-18 12:47:02 UTC; heinzec
 Repository: CRAN
-Date/Publication: 2018-04-16 08:58:38 UTC
+Date/Publication: 2018-05-18 13:42:55 UTC
