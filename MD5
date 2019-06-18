@@ -1,4 +1,4 @@
-1139ea48a3a63aff9f5c3aaeda690c82 *DESCRIPTION
+4f0cb765a003f95e5468414b423fd674 *DESCRIPTION
 f606b4094e4e9032bffb30c53cf34a79 *NAMESPACE
 3443ab235cae7893321758fcd45a2ba7 *R/RESIT.R
 98e1183037ab7555e278bceecf57c5a2 *R/RESIT_fitting.R
@@ -11,9 +11,9 @@ c1c46d94e4f7fabe599c484f2018bef3 *R/bivariateANM.R
 32e012e28ecec1b8a70151ad30b18ee7 *R/convertForRanking.R
 b417becda700e37970781bc984551ae2 *R/evaluateRanking.R
 bb425271ea448ab40708732ddf84ca0c *R/getLargestWeightForCycle.R
-59b5bd220d76feabcb05c0a3f7b38ddc *R/getParents.R
-8b61263f18ac9e9e839e252123333e32 *R/getParentsStable.R
-626818fd7c1dc51415ff5957c7120a06 *R/getRanking.R
+02aa3d14d42a205016bb03c650d0e258 *R/getParents.R
+d00b67a6dafe0c5604b51f2b6ab1b0aa *R/getParentsStable.R
+51e387c668ec9f665678bfdc49d2809e *R/getRanking.R
 0cabe3fbb91bb951a75489f3ae430215 *R/helperFunctions.R
 0b24fa58507a485f8e0b7856b4dd03eb *R/indtestHsic.R
 fd634300370c2047ca63ed02b36d1887 *R/redoEval.R
@@ -25,7 +25,7 @@ debd16b4bd7989e49333584a2fe93e39 *R/runARGES.R
 655e02b9efa90f26c176e06ae4bfa61b *R/runFCI.R
 65d9c97e9186a144769f6ff6a67d9f61 *R/runFCIPlus.R
 faa86d1448a23d0a9a358b976a7d5af7 *R/runGES.R
-dd3aa63f6e438d5be44a8f2dc7ae0da4 *R/runGIES.R
+f252d195d4f0ce9ae8255e96cb500bd2 *R/runGIES.R
 4e43d87823e5e68af71766986f6a6869 *R/runHiddenICP.R
 41e258f41676009ec621236d19434528 *R/runICP.R
 18fd89e0c7867b3ff68807ebbc7cfbfc *R/runLINGAM.R
@@ -48,13 +48,13 @@ ec6fb6c831b83f413c008caa0149948f *R/simulate.R
 866d9c7059785ad0355a0c0a41a8b823 *R/verticalAvROC.R
 dccd8043f9680173da37c76f440323fd *data/simDataInv.rda
 7552eeb6d6f6168fe1409511ed87d5a2 *demo/00Index
-f3dd3957e261fa1204e8491efbe427a0 *demo/simulation.R
+bb6799e641cbedde45467ec51adbe577 *demo/simulation.R
 e3890d798480f631f404b2d8a1e3a86b *inst/CITATION
 88821148675b8c7bc07bc2f8169a966c *man/CompareCausalNetworks-package.Rd
-1bb7971fb09e047ab00885312a8e3686 *man/getParents.Rd
-1422b43fd0799f397846db3888688afb *man/getParentsStable.Rd
-c94f2bf2a302c07a160b211e9c3c4e80 *man/getRanking.Rd
+bd47cabcca41921b52a6e947cda4068a *man/getParents.Rd
+ed1927bc5e9be53e7fa097e695e46fea *man/getParentsStable.Rd
+399c66e4226cc34ac6103cf4330bc089 *man/getRanking.Rd
 d6c0a51a47f8d312c5c0d1fa7c145a29 *man/simDataInv.Rd
-0d267e8f0e0473f1f6107e02647db904 *man/simulateInterventions.Rd
+fc1534526ada740044c6ca7ec6654de2 *man/simulateInterventions.Rd
 6bf3cafd1b491f8c0ee72734ddebc4e2 *tests/testthat.R
 e635db4bcfce5ecc588f35e7f6e4b81f *tests/testthat/test_getParents_defaults_all_methods.R
