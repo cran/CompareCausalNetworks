@@ -1,8 +1,8 @@
 Package: CompareCausalNetworks
 Type: Package
 Title: Interface to Diverse Estimation Methods of Causal Networks
-Version: 0.2.4
-Date: 2019-06-18
+Version: 0.2.6.2
+Date: 2020-02-17
 Author: Christina Heinze-Deml <heinzedeml@stat.math.ethz.ch>,
     Nicolai Meinshausen <meinshausen@stat.math.ethz.ch>
 Depends: R (>= 3.1.0)
@@ -11,7 +11,9 @@ Maintainer: Christina Heinze-Deml <heinzedeml@stat.math.ethz.ch>
 Description: Unified interface for the estimation of causal networks, including
     the methods 'backShift' (from package 'backShift'), 'bivariateANM' (bivariate
     additive noise model), 'bivariateCAM' (bivariate causal additive model),
-    'CAM' (causal additive model) (from package 'CAM'), 'hiddenICP' (invariant
+    'CAM' (causal additive model) (from package 'CAM'; the package is 
+    temporarily unavailable on the CRAN repository; formerly available versions 
+    can be obtained from the archive), 'hiddenICP' (invariant
     causal prediction with hidden variables), 'ICP' (invariant causal prediction)
     (from package 'InvariantCausalPrediction'), 'GES' (greedy equivalence
     search), 'GIES' (greedy interventional equivalence search), 'LINGAM', 'PC' (PC
@@ -24,8 +26,8 @@ Suggests: pcalg, InvariantCausalPrediction, glmnet, backShift, CAM,
         kernlab, mgcv, mboost, bnlearn, testthat, huge, flare
 URL: https://github.com/christinaheinze/CompareCausalNetworks
 BugReports: https://github.com/christinaheinze/CompareCausalNetworks/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 NeedsCompilation: no
-Packaged: 2019-06-18 06:23:22 UTC; heinzec
+Packaged: 2020-02-17 10:26:10 UTC; heinzec
 Repository: CRAN
-Date/Publication: 2019-06-18 08:10:02 UTC
+Date/Publication: 2020-02-17 19:00:42 UTC

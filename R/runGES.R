@@ -2,8 +2,8 @@ runGES <- function(X, parentsOf, variableSelMat, setOptions, directed, verbose,
                    ...){
   
   # additional options for GES
-  optionsList <- list("phases"= c("turning"),
-                      "iterate"=FALSE,
+  optionsList <- list("phase"= c("forward", "backward", "turning"),
+                      "iterate"=TRUE,
                       "adaptive" = "none", 
                       "maxDegree"=integer(0),
                       "lambda" = 0.5*log(nrow(X)))
